@@ -16,22 +16,22 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * Hello world!
- *
- */
 public class App
 {
     public static void main( String[] args ) throws FtpException {
 
+        // Creating a new FTP server
         FtpServerFactory serverFactory = new FtpServerFactory();
         ListenerFactory factory = new ListenerFactory();
-        factory.setPort(8123);// set the port of the listener (choose your desired port, not 1234)
+        factory.setPort(8123);// set the port of the listener
+        // replace the default listener to the serverFactory (for network management). multiple listeners are possible.
         serverFactory.addListener("default", factory.createListener());
         PropertiesUserManagerFactory userManagerFactory = new PropertiesUserManagerFactory();
-        userManagerFactory.setFile(new File("/home/sean/Documents/FTP/myusers.properties"));//choose any. We're telling the FTP-server where to read it's user list
+        //choose any. We're telling the FTP-server where to read it's user list
+        userManagerFactory.setFile(new File("/home/sean/Documents/FTP/myusers.properties"));
         userManagerFactory.setPasswordEncryptor(new PasswordEncryptor()
-        {//We store clear-text passwords in this example
+        //We store clear-text passwords in this example
+        {
 
             @Override
             public String encrypt(String password) {
@@ -43,10 +43,11 @@ public class App
                 return passwordToCheck.equals(storedPassword);
             }
         });
-        //Let's add a user, since our myusers.properties files is empty on our first test run
+        // add a user, since myusers.properties files is empty on the first test run
         BaseUser user = new BaseUser();
         user.setName("test");
         user.setPassword("test");
+        // set the dir that this user can access
         user.setHomeDirectory("/home/sean/Documents/FTP");
         List<Authority> authorities = new ArrayList<Authority>();
         authorities.add(new WritePermission());
@@ -54,15 +55,15 @@ public class App
         UserManager um = userManagerFactory.createUserManager();
         try
         {
-            um.save(user);//Save the user to the user list on the filesystem
+            um.save(user);// Save the user to the user list on the filesystem
         }
         catch (FtpException e1)
         {
-            //Deal with exception as you need
+            // Deal with exception as needed
         }
         serverFactory.setUserManager(um);
         Map<String, Ftplet> m = new HashMap<String, Ftplet>();
-        m.put("miaFtplet", new Ftplet()
+        m.put("myFtplet", new Ftplet()
         {
 
             @Override
